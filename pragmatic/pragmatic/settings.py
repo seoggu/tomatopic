@@ -9,23 +9,42 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
+import os
+from django.urls import reverse_lazy
+import environ
+
 
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+'''
+2. 각 호출자가 기본 매개변수를 전달할 필요가 없도록 환경 변수의 체계 기반 조회를 제공합니다.
+라고 번역하니 나와있는데, 무슨말인지 생각해보니 환경변수를 불러올 수 있는 상태로 세팅한다고
+이해했다. 
+'''
+env = environ.Env(DEBUG=(bool, True))
+
+'''
+3. 환경변수를 읽어올 준비는 마쳤고, 어떤 파일에서 불러올건지 정해줘야 하기 때문에
+나는 '.env'에서 가져올거라고 설정해줬다.
+'''
+environ.Env.read_env(
+    env_file=os.path.join(BASE_DIR, '.env')
+)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-msy*vyk2+b%vm=nkwrz9f2bo!=pw-6_-3b^w73jkx6n#ico*2p'
+SECRET_KEY = env('SECRET_KEY')
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,6 +56,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'bootstrap5',
+    'accountapp',
+    'profileapp',
+    'articleapp',
+    'commentapp',
+    'projectapp',
+    'subscribeapp',
 ]
 
 MIDDLEWARE = [
@@ -54,7 +80,7 @@ ROOT_URLCONF = 'pragmatic.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -115,9 +141,23 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+LOGIN_REDIRECT_URL = reverse_lazy('home')
+LOGOUT_REDIRECT_URL = reverse_lazy('accountapp:login')
+
+MEDIA_URL ='/media/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
