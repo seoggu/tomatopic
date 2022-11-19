@@ -1,0 +1,19 @@
+FROM python:3.10.8
+
+WORKDIR /home/
+
+RUN git clone https://github.com/seoggu/tomatopic.git
+
+WORKDIR /home/tomatopic/pragmatic
+
+RUN pip install -r requirements.txt
+
+RUN echo "SECRET_KEY=django-insecure-msy*vyk2+b%vm=nkwrz9f2bo!=pw-6_-3b^w73jkx6n#ico*2p" > .env
+
+RUN python manage.py makemigrations
+
+RUN python manage.py migrate
+
+EXPOSE 8000
+
+CMD ["python","manage.py","runserver","0.0.0.0:8000"]
