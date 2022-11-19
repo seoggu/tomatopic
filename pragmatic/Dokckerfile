@@ -8,6 +8,8 @@ WORKDIR /home/tomatopic/pragmatic
 
 RUN pip install -r requirements.txt
 
+RUN pip install gunicorn
+
 RUN echo "SECRET_KEY=django-insecure-msy*vyk2+b%vm=nkwrz9f2bo!=pw-6_-3b^w73jkx6n#ico*2p" > .env
 
 RUN python manage.py makemigrations
@@ -16,4 +18,4 @@ RUN python manage.py migrate
 
 EXPOSE 8000
 
-CMD ["python","manage.py","runserver","0.0.0.0:8000"]
+CMD ["gunicorn","pragmatic.wsgi","--bind","0.0.0.0:8000"]
