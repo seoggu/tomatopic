@@ -4,7 +4,7 @@ from .base import *
 
 def read_Secret(secret_name):
     
-    file = open('/run/secrets' + secret_name)
+    file = open('/run/secrets/' + secret_name)
     secret = file.read()
     secret = secret.rstrip().lstrip()
     file.close()
